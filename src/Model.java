@@ -1,5 +1,4 @@
-public class Model extends Thread
-{
+public class Model extends Thread {
     // to set the environment temperature and other values
     public static double EnvironmentTemp = 20.0;
     public static double EnvironmentHumidity = 40.0;
@@ -13,9 +12,7 @@ public class Model extends Thread
     // input for the rate at which the devices going to work
     private double heatingRate;
     private double coolingRate;
-
     private double humidifierRate;
-
     private double sprinklerRate;
 
     // to store the values of the updated values such as temp,humidity and soil Moisture  as per the rates
@@ -23,105 +20,120 @@ public class Model extends Thread
     private double updatedHumidity;
     private double updatedSoilMoisture;
 
-    // to store the status of the simulation
-    private boolean runningStatus;
-
     // TO store the status of each of the devices
     private boolean furnaceStatus;
     private boolean airConditionerStatus;
     private boolean humidifierStatus;
     private boolean sprinklerStatus;
 
+    private int refreshRate;
 
-    private int tempRefreshRate;
-    private int humidityRefreshRate;
-    private int moistureRefreshRate;
-
-    public Model()
-    {
+    public Model() {
         furnaceStatus = false;
         airConditionerStatus = false;
         humidifierStatus = false;
         sprinklerStatus = false;
     }
 
-    public Model(int temptime1,int humiditytime2,int soilMoisturetime3)
-    {
-        super();
-        tempRefreshRate = temptime1;
-        humidityRefreshRate = humiditytime2;
-        moistureRefreshRate = soilMoisturetime3;
-    }
-
     public void setHeatingRate(double heatingRate) {
         this.heatingRate = heatingRate;
     }
+
     public void setCoolingRate(double coolingRate) {
         this.coolingRate = coolingRate;
     }
 
+    public void setDesiredTemp(double desiredTemp) {
+        this.desiredTemp = desiredTemp;
+    }
+
+    public void setDesiredHumidity(double desiredHumidity) {
+        this.desiredHumidity = desiredHumidity;
+    }
+
+    public void setDesiredSoilMoisture(double desiredSoilMoisture) {
+        this.desiredSoilMoisture = desiredSoilMoisture;
+    }
+
+    public void setHumidifierRate(double humidifierRate) {
+        this.humidifierRate = humidifierRate;
+    }
+
+    public void setSprinklerRate(double sprinklerRate) {
+        this.sprinklerRate = sprinklerRate;
+    }
     @Override
     public void run()
     {
-        runningStatus = true;
-        try
-        {
-            while(runningStatus)
+        // to store the status of the simulation
+        boolean runningStatus = true;
+            while (runningStatus)
             {
-                if(furnaceStatus)
-                {
+                if (furnaceStatus) {
                     updatedTemp = EnvironmentTemp + heatingRate;
-                }
-                else if (airConditionerStatus)
-                {
+                } else if (airConditionerStatus) {
                     updatedTemp = EnvironmentTemp - coolingRate;
                 }
-                if(humidifierStatus)
-                {
+                if (humidifierStatus) {
                     updatedHumidity = EnvironmentHumidity + humidifierRate;
-                }
-                else
-                {
+                } else {
                     updatedHumidity = EnvironmentHumidity - humidifierRate;
                 }
-                if(sprinklerStatus)
-                {
+                if (sprinklerStatus) {
                     updatedSoilMoisture = EnvironmentSoilMoisture + sprinklerRate;
-                }
-                else
-                {
+                } else {
                     updatedSoilMoisture = EnvironmentSoilMoisture - sprinklerRate;
                 }
-
-                if (updatedTemp<desiredTemp-3.0)
+                if (updatedTemp < desiredTemp - 3.0)
                     furnaceStatus = true;
                 else
                     furnaceStatus = false;
-
                 if (updatedTemp > desiredTemp + 3.0)
                     airConditionerStatus = true;
                 else
                     airConditionerStatus = false;
 
-                if (updatedHumidity<desiredHumidity)
+                if (updatedHumidity < desiredHumidity)
                     humidifierStatus = true;
                 else
                     humidifierStatus = false;
 
-                if(updatedSoilMoisture<desiredSoilMoisture)
+                if (updatedSoilMoisture < desiredSoilMoisture)
                     sprinklerStatus = true;
                 else
                     sprinklerStatus = false;
-
-                if(updatedTemp == desiredTemp && updatedHumidity == desiredHumidity && updatedSoilMoisture == desiredSoilMoisture)
-                {
+                if (updatedTemp == desiredTemp && updatedHumidity == desiredHumidity && updatedSoilMoisture == desiredSoilMoisture) {
                     runningStatus = false;
                 }
             }
-
-        }catch(Exception e)
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e)
         {
-            System.exit(0);
+            throw new RuntimeException(e);
         }
+    }
+    public double getUpdatedTemp() {
+        return updatedTemp;
+    }
+    public double getUpdatedHumidity() {
+        return updatedHumidity;
+    }
+
+    public double getUpdatedSoilMoisture() {
+        return updatedSoilMoisture;
+    }
+
+    public boolean isFurnaceStatus() {
+        return furnaceStatus;
+    }
+    public boolean isAirConditionerStatus() {
+        return airConditionerStatus;
+    }
+    public boolean isHumidifierStatus() {
+        return humidifierStatus;
+    }
+    public boolean isSprinklerStatus() {
+        return sprinklerStatus;
     }
 }
